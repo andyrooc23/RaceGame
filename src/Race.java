@@ -626,11 +626,11 @@ public class Race {
             while (!endgame) {
                 if (timeLeft <= 0 ) {
                     endgame = true;
-                } else if(p2LapsLeft == 0) {
-                    winner = "Player 2";
-                    endgame = true;
-                }else if (p1LapsLeft == 0){
+                } else if(p1LapsLeft == 0) {
                     winner = "Player 1";
+                    endgame = true;
+                }else if (p2LapsLeft == 0){
+                    winner = "Player 2";
                     endgame = true;
                 } else{
 
