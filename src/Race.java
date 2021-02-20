@@ -58,8 +58,8 @@ public class Race {
     private static int TRACKYOFFSET;
     private static int WINWIDTH;
     private static int WINHEIGHT;
-    private static int p1LapsLeft;
-    private static int p2LapsLeft;
+    private static int p1LapsLeft = 3;
+    private static int p2LapsLeft = 3;
     private static int timeLeft;
     private static double pi;
     private static double twoPi;
@@ -152,6 +152,11 @@ public class Race {
                 g.drawString("Time Left: " + timeLeft, 380, 525);
                 g.drawString("P1 laps: " + p1LapsLeft, 15,525);
                 g.drawString("P2 laps: " + p2LapsLeft, 85,525);
+                g.drawString("P1 speed: " + Math.round(p1velocity), 15,505);
+                g.drawString("P2 speed: " + Math.round(p2velocity), 85,505);
+
+
+
                 try {
                     Thread.sleep(32);
                 } catch (InterruptedException e) {
@@ -415,7 +420,6 @@ public class Race {
     }
 
     private static class LapSetter implements ActionListener {
-
         private static void setLaps(int input) {
             p1LapsLeft = input;
             p2LapsLeft = input;
@@ -555,6 +559,8 @@ public class Race {
             }
             System.out.println("Game_Over. _You_Win!");
             gameOverDraw();
+            p1LapsLeft = 3;
+            p2LapsLeft = 3;
         }
     }
 
