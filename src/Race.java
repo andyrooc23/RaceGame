@@ -39,6 +39,7 @@ public class Race {
     private static Boolean wasdDownPressed;
     private static Boolean wasdLeftPressed;
     private static Boolean wasdRightPressed;
+    private static String winner;
     private static ImageObject p1;
     private static ImageObject p2;
     private static ImageObject trackBorder;
@@ -98,6 +99,8 @@ public class Race {
         bindKey(myPanel, "A");
         bindKey(myPanel, "D");
 
+        winner = "";
+
         appFrame.getContentPane().add(myPanel, "South");
         appFrame.setVisible(true);
     }
@@ -151,18 +154,16 @@ public class Race {
                 playerDraw(player1, p1);
                 playerDraw(player2, p2);
                 g.setColor(Color.BLUE);
-                g.fillRect(10,510,150,50);
-                g.fillRect(10,460,150,50);
-                g.fillRect(410,460,100,50);
-                g.fillRect(375,510,100,50);
+                g.fillRect(10,460,125,100);
+                g.fillRect(385,460,125,100);
                 g.setColor(Color.PINK);
-                g.drawString("Time Left: " + timeLeft, 380, 525);
-                g.drawString("P1 laps: " + p1LapsLeft, 15,525);
-                g.drawString("P2 laps: " + p2LapsLeft, 85,525);
+                g.drawString("Time Left: " + timeLeft, 390, 525);
+                g.drawString("P1 laps: " + p1LapsLeft, 15,515);
+                g.drawString("P2 laps: " + p2LapsLeft, 15,535);
                 g.drawString("P1 speed: " + Math.round(p1velocity * 100), 15,475);
                 g.drawString("P2 speed: " + Math.round(p2velocity * 100), 15,495);
-                g.drawString("P1 best Lap: " + (p1BestLapTime) + "s", 410,475);
-                g.drawString("P2 best Lap: " + Math.round(p2BestLapTime) + "s", 410,500);
+                g.drawString("P1 best Lap: " + String.format("%.2f", p1BestLapTime) + "s", 390,475);
+                g.drawString("P2 best Lap: " + String.format("%.2f",p2BestLapTime) + "s", 390,500);
 
 
 
@@ -427,6 +428,8 @@ public class Race {
             t6.start();
             t7.start();
             t8.start();
+            t9.start();
+            t10.start();
         }
     }
 
@@ -443,17 +446,37 @@ public class Race {
         }
     }
 
+    public static double round(double value, int places) {
+        if (places < 0) throw new IllegalArgumentException();
+
+        long factor = (long) Math.pow(10, places);
+        value = value * factor;
+        long tmp = Math.round(value);
+        return (double) tmp / factor;
+    }
+
 
     private static class P1LapTimeChecker implements Runnable{
         public void run() {
-            long startTime = System.currentTimeMillis();
+            double startTime = System.currentTimeMillis();
+            try{
+                Thread.sleep(7000);
+            }catch (InterruptedException e){
+
+            }
             while(!endgame){
                 if(collisionOccurs(p1, finishLine)){
-                    long elapsedTime = System.currentTimeMillis() - startTime;
-                    if((((double) elapsedTime) / 1000) < p1BestLapTime){
-                        p1BestLapTime = elapsedTime;
+                    double elapsedTime = System.currentTimeMillis() - startTime;
+                    if((elapsedTime / 1000) < p1BestLapTime){
+                        p1BestLapTime = round((elapsedTime / 1000), 2);
                     }
                     startTime = System.currentTimeMillis();
+
+                    try{
+                        Thread.sleep(3000);
+                    }catch (InterruptedException e){
+
+                    }
                 }
             }
 
@@ -462,15 +485,25 @@ public class Race {
 
     private static class P2LapTimeChecker implements Runnable{
         public void run() {
-            long startTime = System.currentTimeMillis();
+            double startTime = System.currentTimeMillis();
+            try{
+                Thread.sleep(7000);
+            }catch (InterruptedException e){
 
+            }
             while(!endgame){
                 if(collisionOccurs(p2, finishLine)){
-                    long elapsedTime = System.currentTimeMillis() - startTime;
-                    if((double) elapsedTime < p2BestLapTime){
-                        p2BestLapTime = elapsedTime;
+                    double elapsedTime = System.currentTimeMillis() - startTime;
+                    if((elapsedTime / 1000) < p2BestLapTime){
+                        p2BestLapTime = round((elapsedTime / 1000), 2);
                     }
                     startTime = System.currentTimeMillis();
+
+                    try{
+                        Thread.sleep(3000);
+                    }catch (InterruptedException e){
+
+                    }
                 }
             }
 
@@ -591,9 +624,16 @@ public class Race {
     private static class TimeAndLapCounter implements Runnable {
         public void run() {
             while (!endgame) {
-                if (timeLeft <= 0 || (p2LapsLeft == 0 || p1LapsLeft == 0)) {
+                if (timeLeft <= 0 ) {
                     endgame = true;
-                } else {
+                } else if(p2LapsLeft == 0) {
+                    winner = "Player 2";
+                    endgame = true;
+                }else if (p1LapsLeft == 0){
+                    winner = "Player 1";
+                    endgame = true;
+                } else{
+
                     try {
                         timeLeft--;
                         Thread.sleep(1000);
@@ -604,6 +644,12 @@ public class Race {
             }
             System.out.println("Game_Over. _You_Win!");
             gameOverDraw();
+            Graphics g = appFrame.getGraphics();
+            g.setColor(Color.BLUE);
+            g.fillRect(160, 350, 220, 100);
+            g.setColor(Color.PINK);
+            g.setFont( new Font("Comic Sans", Font.PLAIN, 18));
+            g.drawString(winner + " is the Winner!!!",175, 400);
             p1LapsLeft = 3;
             p2LapsLeft = 3;
         }
