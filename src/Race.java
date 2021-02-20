@@ -290,7 +290,7 @@ public class Race {
 
         public Player1Mover() {
             velocitystep = 0.01;
-            rotatestep = 0.01;
+            rotatestep = 0.04;
         }
 
         public void run() {
