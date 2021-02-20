@@ -148,8 +148,28 @@ public class Race {
         public void run() {
             Graphics g = appFrame.getGraphics();
             backgroundDraw();
+            trackDraw();
+            g.setColor(Color.RED);
+            g.fillOval(245, 225, 50, 50);
+            try{
+                Thread.sleep(1000);
+            } catch (InterruptedException e){
+            }
+            g.setColor(Color.YELLOW);
+            g.fillOval(245, 275, 50, 50);
+            try{
+                Thread.sleep(1000);
+            } catch (InterruptedException e){
+            }
+            g.setColor(Color.GREEN);
+            g.fillOval(245, 325, 50, 50);
+            try{
+                Thread.sleep(1000);
+            } catch (InterruptedException e){
+            }
+            backgroundDraw();
+            trackDraw();
             while (!endgame) {
-//                backgroundDraw();
                 trackDraw();
                 playerDraw(player1, p1);
                 playerDraw(player2, p2);
