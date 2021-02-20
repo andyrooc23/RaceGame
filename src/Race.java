@@ -121,9 +121,9 @@ public class Race {
         playerWidth = 20;
         playerHeight = 20;
         p1originalX = (double) XOFFSET + ((double) WINWIDTH / 2.0) - (playerWidth / 2.0) - 75;
-        p1originalY = (double) YOFFSET + ((double) WINHEIGHT / 2.0) - (playerHeight / 2.0) + 75;
+        p1originalY = (double) YOFFSET + ((double) WINHEIGHT / 2.0) - (playerHeight / 2.0) + 80;
         p2originalX = (double) XOFFSET + ((double) WINHEIGHT / 2.0) - (playerWidth / 2.0) - 30;
-        p2originalY = (double) YOFFSET + ((double) WINHEIGHT / 2.0) - (playerHeight / 2.0) + 75;
+        p2originalY = (double) YOFFSET + ((double) WINHEIGHT / 2.0) - (playerHeight / 2.0) + 80;
 
         try {
             player1 = ImageIO.read(new File("src/pics/player1.png"));
@@ -140,20 +140,22 @@ public class Race {
     class Animate implements Runnable {
         public void run() {
             Graphics g = appFrame.getGraphics();
+            backgroundDraw();
             while (!endgame) {
-                backgroundDraw();
+//                backgroundDraw();
                 trackDraw();
                 playerDraw(player1, p1);
                 playerDraw(player2, p2);
                 g.setColor(Color.BLUE);
                 g.fillRect(10,510,150,50);
+                g.fillRect(10,460,150,50);
                 g.fillRect(375,510,100,50);
                 g.setColor(Color.PINK);
                 g.drawString("Time Left: " + timeLeft, 380, 525);
                 g.drawString("P1 laps: " + p1LapsLeft, 15,525);
                 g.drawString("P2 laps: " + p2LapsLeft, 85,525);
-                g.drawString("P1 speed: " + Math.round(p1velocity), 15,505);
-                g.drawString("P2 speed: " + Math.round(p2velocity), 85,505);
+                g.drawString("P1 speed: " + Math.round(p1velocity * 100), 15,475);
+                g.drawString("P2 speed: " + Math.round(p2velocity * 100), 15,495);
 
 
 
@@ -284,7 +286,7 @@ public class Race {
                 } else {
                     if (p1velocity > 0) {
                         p1velocity -= velocitystep;
-                    } else {
+                    } else if(p1velocity < 0){
                         p1velocity += velocitystep;
                     }
                 }
@@ -339,7 +341,7 @@ public class Race {
                 } else {
                     if (p2velocity > 0) {
                         p2velocity -= velocitystep;
-                    } else {
+                    } else if(p2velocity < 0){
                         p2velocity += velocitystep;
                     }
                 }
