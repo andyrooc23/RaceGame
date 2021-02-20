@@ -52,6 +52,8 @@ public class Race {
     private static double p2originalY;
     private static double p1velocity;
     private static double p2velocity;
+    private static double p1BestLapTime;
+    private static double p2BestLapTime;
     private static int XOFFSET;
     private static int TRACKXOFFSET;
     private static int YOFFSET;
@@ -124,6 +126,8 @@ public class Race {
         p1originalY = (double) YOFFSET + ((double) WINHEIGHT / 2.0) - (playerHeight / 2.0) + 80;
         p2originalX = (double) XOFFSET + ((double) WINHEIGHT / 2.0) - (playerWidth / 2.0) - 30;
         p2originalY = (double) YOFFSET + ((double) WINHEIGHT / 2.0) - (playerHeight / 2.0) + 80;
+        p1BestLapTime = 200.0;
+        p2BestLapTime = 200.0;
 
         try {
             player1 = ImageIO.read(new File("src/pics/player1.png"));
@@ -149,6 +153,7 @@ public class Race {
                 g.setColor(Color.BLUE);
                 g.fillRect(10,510,150,50);
                 g.fillRect(10,460,150,50);
+                g.fillRect(410,460,100,50);
                 g.fillRect(375,510,100,50);
                 g.setColor(Color.PINK);
                 g.drawString("Time Left: " + timeLeft, 380, 525);
@@ -156,6 +161,8 @@ public class Race {
                 g.drawString("P2 laps: " + p2LapsLeft, 85,525);
                 g.drawString("P1 speed: " + Math.round(p1velocity * 100), 15,475);
                 g.drawString("P2 speed: " + Math.round(p2velocity * 100), 15,495);
+                g.drawString("P1 best Lap: " + (p1BestLapTime) + "s", 410,475);
+                g.drawString("P2 best Lap: " + Math.round(p2BestLapTime) + "s", 410,500);
 
 
 
@@ -410,6 +417,8 @@ public class Race {
             Thread t6 = new Thread(new P2FinishLineChecker());
             Thread t7 = new Thread(new TimeAndLapCounter());
             Thread t8 = new Thread(new AudioRunner());
+            Thread t9 = new Thread(new P1LapTimeChecker());
+            Thread t10 = new Thread(new P2LapTimeChecker());
             t1.start();
             t2.start();
             t3.start();
@@ -431,6 +440,40 @@ public class Race {
             JComboBox cb = (JComboBox) e.getSource();
             int numLaps = Integer.parseInt((String) cb.getSelectedItem());
             setLaps(numLaps);
+        }
+    }
+
+
+    private static class P1LapTimeChecker implements Runnable{
+        public void run() {
+            long startTime = System.currentTimeMillis();
+            while(!endgame){
+                if(collisionOccurs(p1, finishLine)){
+                    long elapsedTime = System.currentTimeMillis() - startTime;
+                    if((((double) elapsedTime) / 1000) < p1BestLapTime){
+                        p1BestLapTime = elapsedTime;
+                    }
+                    startTime = System.currentTimeMillis();
+                }
+            }
+
+        }
+    }
+
+    private static class P2LapTimeChecker implements Runnable{
+        public void run() {
+            long startTime = System.currentTimeMillis();
+
+            while(!endgame){
+                if(collisionOccurs(p2, finishLine)){
+                    long elapsedTime = System.currentTimeMillis() - startTime;
+                    if((double) elapsedTime < p2BestLapTime){
+                        p2BestLapTime = elapsedTime;
+                    }
+                    startTime = System.currentTimeMillis();
+                }
+            }
+
         }
     }
 
