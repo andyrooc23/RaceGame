@@ -72,6 +72,12 @@ public class Race {
         appFrame.setSize(520, 550);
         JPanel myPanel = new JPanel();
 
+        String[] laps = {"1", "2", "3", "4", "5", "6", "7", "8", "9", "10"};
+
+        JComboBox<String> lapsBox = new JComboBox<>(laps);
+        lapsBox.setSelectedIndex(2);
+        lapsBox.addActionListener(new LapSetter());
+        myPanel.add(lapsBox);
 
         JButton newGameButton = new JButton("New Game");
         newGameButton.addActionListener(new StartGame());
@@ -115,9 +121,9 @@ public class Race {
         playerWidth = 20;
         playerHeight = 20;
         p1originalX = (double) XOFFSET + ((double) WINWIDTH / 2.0) - (playerWidth / 2.0) - 75;
-        p1originalY = (double) YOFFSET + ((double) WINHEIGHT / 2.0) - (playerHeight / 2.0);
+        p1originalY = (double) YOFFSET + ((double) WINHEIGHT / 2.0) - (playerHeight / 2.0) + 75;
         p2originalX = (double) XOFFSET + ((double) WINHEIGHT / 2.0) - (playerWidth / 2.0) - 30;
-        p2originalY = (double) YOFFSET + ((double) WINHEIGHT / 2.0) - (playerHeight / 2.0);
+        p2originalY = (double) YOFFSET + ((double) WINHEIGHT / 2.0) - (playerHeight / 2.0) + 75;
 
         try {
             player1 = ImageIO.read(new File("src/pics/player1.png"));
@@ -140,12 +146,12 @@ public class Race {
                 playerDraw(player1, p1);
                 playerDraw(player2, p2);
                 g.setColor(Color.BLUE);
-                g.fillRect(10, 510, 150, 50);
-                g.fillRect(375, 510, 100, 50);
+                g.fillRect(10,510,150,50);
+                g.fillRect(375,510,100,50);
                 g.setColor(Color.PINK);
                 g.drawString("Time Left: " + timeLeft, 380, 525);
-                g.drawString("P1 laps: " + (p1LapsLeft), 15, 525);
-                g.drawString("P2 laps: " + (p2LapsLeft), 85, 525);
+                g.drawString("P1 laps: " + p1LapsLeft, 15,525);
+                g.drawString("P2 laps: " + p2LapsLeft, 85,525);
                 try {
                     Thread.sleep(32);
                 } catch (InterruptedException e) {
@@ -379,8 +385,6 @@ public class Race {
             middleTrackBorder = new ImageObject(260, 225, 20, 180, 0.0);
             finishLine = new ImageObject(160, 335, 100, 10, 0.0);
 
-            p1LapsLeft = 3;
-            p2LapsLeft = 3;
             timeLeft = 200;
 
             p1velocity = 0.0;
@@ -407,6 +411,20 @@ public class Race {
             t6.start();
             t7.start();
             t8.start();
+        }
+    }
+
+    private static class LapSetter implements ActionListener {
+
+        private static void setLaps(int input) {
+            p1LapsLeft = input;
+            p2LapsLeft = input;
+        }
+
+        public void actionPerformed(ActionEvent e) {
+            JComboBox cb = (JComboBox) e.getSource();
+            int numLaps = Integer.parseInt((String) cb.getSelectedItem());
+            setLaps(numLaps);
         }
     }
 
@@ -486,6 +504,10 @@ public class Race {
 
     private static class P1FinishLineChecker implements Runnable {
         public void run() {
+            try {
+                Thread.sleep(6000);
+            } catch (InterruptedException e) {
+            }
             while (!endgame) {
                 if (collisionOccurs(p1, finishLine)) {
                     p1LapsLeft--;
@@ -500,6 +522,10 @@ public class Race {
 
     private static class P2FinishLineChecker implements Runnable {
         public void run() {
+            try {
+                Thread.sleep(6000);
+            } catch (InterruptedException e) {
+            }
             while (!endgame) {
                 if (collisionOccurs(p2, finishLine)) {
                     p2LapsLeft--;
